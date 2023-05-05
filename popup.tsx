@@ -3,16 +3,11 @@ import { useEffect, useState } from "react"
 
 import CloseButton from "~uiParts/CloseButton"
 
+import { type Data } from "./lib/storage"
 import AddButton from "./uiParts/AddButton"
 import Search from "./uiParts/Search"
 
 import "./style.css"
-
-type Data = {
-  title: string
-  url: string
-  favIconUrl: string
-}
 
 function IndexPopup() {
   const [currentPage, setCurrentPage] = useState<Data>({
@@ -21,7 +16,7 @@ function IndexPopup() {
     favIconUrl: ""
   })
   const [removeButton, setRemoveButton] = useState(false)
-  const [items, setItems] = useStorage("saveItems", [])
+  const [items, setItems] = useStorage<Data[]>("saveItems", [])
   const [render, setRender] = useState(0)
   const [search, setSearch] = useState("")
 
@@ -43,14 +38,9 @@ function IndexPopup() {
         setRemoveButton(false)
       }
     })
-
-    chrome.contextMenus.onClicked.addListener((info) => {
-      if (info.menuItemId === "save") {
-        if (removeButton) {
-          onRemoveURL()
-        } else {
-          onSave()
-        }
+    chrome.runtime.onMessage.addListener((request) => {
+      if (request.type === "UPDATE") {
+        setRender(render + 1)
       }
     })
   }, [items, removeButton])

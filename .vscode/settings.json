@@ -1,5 +1,10 @@
 {
   "editor.codeActionsOnSave": {
     "quickfix.rome": true
-  }
+  },
+  "editor.defaultFormatter": "rome.rome",
+  "[typescript]": {
+    "editor.defaultFormatter": "rome.rome"
+  },
+  "editor.formatOnSave": true
 }

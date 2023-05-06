@@ -1,10 +1,10 @@
 import { useStorage } from "@plasmohq/storage/hook"
 import { useEffect, useState } from "react"
 
-import CloseButton from "~uiParts/CloseButton"
-
 import { type Data } from "./lib/storage"
 import AddButton from "./uiParts/AddButton"
+import CloseButton from "./uiParts/CloseButton"
+import CopyButton from "./uiParts/CopyButton"
 import Search from "./uiParts/Search"
 
 import "./style.css"
@@ -67,6 +67,14 @@ function IndexPopup() {
     setRender(render + 1)
   }
 
+  const onCopy = async (index: number) => {
+    const item = items[index]
+    if (item) {
+      const markdown = `[${item.title}](${item.url})`
+      navigator.clipboard.writeText(markdown)
+    }
+  }
+
   const onRemoveURL = async () => {
     const index = items.findIndex((v) => v.url === currentPage.url)
     if (index === -1) return
@@ -81,11 +89,11 @@ function IndexPopup() {
 
   return (
     <div
-      className="px-4 py-2"
+      className="py-2"
       style={{
         width: "400px"
       }}>
-      <div className="flex items-center">
+      <div className="flex items-center px-4">
         <Search onChangeText={(text) => setSearch(text)} />
         <div className="w-1/4 pl-4">
           {!removeButton ? (
@@ -105,8 +113,8 @@ function IndexPopup() {
         {filteredItems.map((v, index) => (
           <div
             key={String(index)}
-            className=" flex items-center h-6 text-gray-600 hover:text-gray-900 hover:bg-gray-100">
-            <div className="flex w-full pr-6">
+            className=" flex items-center h-6 text-gray-600 hover:text-gray-900 pr-16">
+            <div className="flex w-full mr-14 hover:bg-gray-100 h-6 items-center pl-4">
               <img
                 src={v.favIconUrl}
                 className="w-4 h-4 mr-1"
@@ -119,6 +127,7 @@ function IndexPopup() {
               </p>
             </div>
             <div className="absolute right-4">
+              <CopyButton onCopy={() => onCopy(index)} />
               <CloseButton onRemove={() => onRemove(index)} />
             </div>
           </div>

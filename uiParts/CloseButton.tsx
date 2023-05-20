@@ -6,7 +6,7 @@ function CloseButton(props: Props) {
   return (
     <button
       type="button"
-      className="rounded-md inline-flex items-center justify-center hover:bg-gray-200"
+      className="rounded-md inline-flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600"
       onClick={() => props.onRemove()}>
       <span className="sr-only">Close menu</span>
       <svg

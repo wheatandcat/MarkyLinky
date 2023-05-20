@@ -6,11 +6,11 @@ function CopyButton(props: Props) {
   return (
     <button
       type="button"
-      className="rounded-md inline-flex items-center justify-center hover:bg-gray-200 mr-2"
+      className="rounded-md inline-flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 mr-2"
       onClick={() => props.onCopy()}>
       <span className="sr-only">Copy</span>
       <svg
-        className="h-4 w-4 text-blue-400"
+        className="h-4 w-4 text-primary-600"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"

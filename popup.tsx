@@ -1,5 +1,8 @@
 import { useStorage } from "@plasmohq/storage/hook"
+import titleImage from "data-base64:~assets/title.png"
+import webImage from "data-base64:~assets/web.png"
 import { useEffect, useState } from "react"
+import { DarkModeSwitch } from "react-toggle-dark-mode"
 
 import { type Data } from "./lib/storage"
 import AddButton from "./uiParts/AddButton"
@@ -8,6 +11,8 @@ import CopyButton from "./uiParts/CopyButton"
 import Search from "./uiParts/Search"
 
 import "./style.css"
+
+localStorage.theme = "dark"
 
 function IndexPopup() {
   const [currentPage, setCurrentPage] = useState<Data>({
@@ -19,6 +24,7 @@ function IndexPopup() {
   const [items, setItems] = useStorage<Data[]>("saveItems", [])
   const [render, setRender] = useState(0)
   const [search, setSearch] = useState("")
+  const [mode, setMode] = useStorage<"light" | "dark">("theme", "light")
 
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -84,54 +90,75 @@ function IndexPopup() {
 
   const filteredItems = items.filter((v) => {
     if (search === "") return true
-    return v.title.includes(search)
+    return v.title.toLocaleLowerCase().includes(search.toLocaleLowerCase())
   })
 
   return (
-    <div
-      className="py-2"
-      style={{
-        width: "400px"
-      }}>
-      <div className="flex items-center px-4">
-        <Search onChangeText={(text) => setSearch(text)} />
-        <div className="w-1/4 pl-4">
-          {!removeButton ? (
-            <AddButton onSave={onSave} />
-          ) : (
-            <button
-              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-full"
-              onClick={() => onRemoveURL()}>
-              削除
-            </button>
-          )}
+    <div className={mode}>
+      <div
+        className="pb-3 dark:bg-gray-800"
+        style={{
+          width: "400px"
+        }}>
+        <div className="flex px-4 items-center justify-between py-2">
+          <img src={titleImage} alt="title logo" width={100} />,
+          <DarkModeSwitch
+            checked={mode === "dark"}
+            moonColor="#e6b422"
+            sunColor="#f8b862"
+            onChange={(dark) => setMode(dark ? "dark" : "light")}
+            size={20}
+          />
         </div>
-      </div>
-      <br />
-
-      <div className="text-xs">
-        {filteredItems.map((v, index) => (
-          <div
-            key={String(index)}
-            className=" flex items-center h-6 text-gray-600 hover:text-gray-900 pr-16">
-            <div className="flex w-full mr-14 hover:bg-gray-100 h-6 items-center pl-4">
-              <img
-                src={v.favIconUrl}
-                className="w-4 h-4 mr-1"
-                alt="image favIcon"
-              />
-              <p className="truncate">
-                <a href={v.url} target="_blank" rel="noreferrer">
-                  {v.title}
-                </a>
-              </p>
-            </div>
-            <div className="absolute right-4">
-              <CopyButton onCopy={() => onCopy(index)} />
-              <CloseButton onRemove={() => onRemove(index)} />
-            </div>
+        <hr className="h-px bg-gray-200 border-0 dark:bg-gray-700" />
+        <div className="flex items-center pl-4 pr-1 pt-3 pb-3">
+          <Search onChangeText={(text) => setSearch(text)} />
+          <div className="w-1/4 pl-4">
+            {!removeButton ? (
+              <AddButton onSave={onSave} />
+            ) : (
+              <button
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-full"
+                onClick={() => onRemoveURL()}>
+                削除
+              </button>
+            )}
           </div>
-        ))}
+        </div>
+
+        <div className="text-xs">
+          {filteredItems.map((v, index) => (
+            <div key={String(index)}>
+              <div className="flex items-center h-6 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100 pr-16">
+                <div className="flex w-full mr-14 hover:bg-gray-100 dark:hover:bg-gray-600 h-6 items-center pl-4">
+                  {v.favIconUrl ? (
+                    <img
+                      src={v.favIconUrl}
+                      className="w-4 h-4 mr-1"
+                      alt="image favIcon"
+                    />
+                  ) : (
+                    <img
+                      src={webImage}
+                      className="w-4 h-4 mr-1"
+                      alt="image favIcon"
+                      style={mode === "dark" ? { filter: "invert(1)" } : null}
+                    />
+                  )}
+                  <p className="truncate">
+                    <a href={v.url} target="_blank" rel="noreferrer">
+                      {v.title}
+                    </a>
+                  </p>
+                </div>
+                <div className="absolute right-4">
+                  <CopyButton onCopy={() => onCopy(index)} />
+                  <CloseButton onRemove={() => onRemove(index)} />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )

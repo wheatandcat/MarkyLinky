@@ -5,4 +5,26 @@
 
 ## 説明
 
-URLを保存/削除、Markdownを出力ができるブラウザ拡張。
+<img src="./doc/screen.jpg"  width="400"/>
+
+ - URLを保存/削除、Markdownを出力ができるブラウザ拡張
+
+## コマンド
+
+### ローカル起動
+
+```bash
+$ yarn dev
+```
+
+### ビルド
+
+```bash
+$ yarn build
+```
+
+### パッケージ化
+
+```bash
+$ yarn package
+```

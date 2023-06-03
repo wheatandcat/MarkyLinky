@@ -10,9 +10,9 @@
     "package": "plasmo package"
   },
   "dependencies": {
-    "@plasmohq/messaging": "^0.2.0",
-    "@plasmohq/storage": "^1.5.0",
-    "plasmo": "0.69.0",
+    "@plasmohq/messaging": "^0.3.3",
+    "@plasmohq/storage": "^1.6.1",
+    "plasmo": "0.74.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-toggle-dark-mode": "^1.1.1"
@@ -35,12 +35,9 @@
       "https://*/*"
     ],
     "permissions": [
-      "scripting",
-      "action",
       "storage",
       "tabs",
-      "contextMenus",
-      "contextMenus.onClicked.addListener"
+      "contextMenus"
     ]
   }
 }

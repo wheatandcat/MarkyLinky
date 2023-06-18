@@ -1,5 +1,5 @@
 import { Storage } from "@plasmohq/storage";
-import { type Data } from "./lib/storage";
+import { type Data } from "../lib/storage";
 
 const storage = new Storage();
 
@@ -22,7 +22,10 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
       const newItems = items.filter((v) => v.url !== activeTab.url);
       await storage.set("saveItems", newItems);
     } else {
-      items.push(activeTab);
+      items.push({
+        ...activeTab,
+        created: new Date().toISOString(),
+      });
       await storage.set("saveItems", items);
     }
     chrome.runtime.sendMessage({

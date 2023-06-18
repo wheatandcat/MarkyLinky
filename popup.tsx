@@ -9,6 +9,7 @@ import AddButton from "./uiParts/AddButton"
 import CloseButton from "./uiParts/CloseButton"
 import CopyButton from "./uiParts/CopyButton"
 import Search from "./uiParts/Search"
+import SettingIcon from "./uiParts/SettingIcon"
 
 import "./style.css"
 
@@ -18,7 +19,8 @@ function IndexPopup() {
   const [currentPage, setCurrentPage] = useState<Data>({
     title: "",
     url: "",
-    favIconUrl: ""
+    favIconUrl: "",
+    created: new Date().toISOString()
   })
   const [removeButton, setRemoveButton] = useState(false)
   const [items, setItems] = useStorage<Data[]>("saveItems", [])
@@ -34,7 +36,8 @@ function IndexPopup() {
       setCurrentPage({
         title: activeTab.title,
         url: activeTab.url,
-        favIconUrl: activeTab.favIconUrl
+        favIconUrl: activeTab.favIconUrl,
+        created: new Date().toISOString()
       })
 
       const isCurrentPageURL = items.some((v) => v.url === activeTab.url)
@@ -101,14 +104,23 @@ function IndexPopup() {
           width: "400px"
         }}>
         <div className="flex px-4 items-center justify-between py-2">
-          <img src={titleImage} alt="title logo" width={100} />,
-          <DarkModeSwitch
-            checked={mode === "dark"}
-            moonColor="#e6b422"
-            sunColor="#f8b862"
-            onChange={(dark) => setMode(dark ? "dark" : "light")}
-            size={20}
-          />
+          <img src={titleImage} alt="title logo" width={100} />
+          <div className="flex items-center">
+            <div className="px-2">
+              <DarkModeSwitch
+                checked={mode === "dark"}
+                moonColor="#e6b422"
+                sunColor="#f8b862"
+                onChange={(dark) => setMode(dark ? "dark" : "light")}
+                size={20}
+              />
+            </div>
+            <button onClick={() => chrome.runtime.openOptionsPage()}>
+              <SettingIcon
+                color={mode === "dark" ? " text-white" : "text-gray-500"}
+              />
+            </button>
+          </div>
         </div>
         <hr className="h-px bg-gray-200 border-0 dark:bg-gray-700" />
         <div className="flex items-center pl-4 pr-1 pt-3 pb-3">

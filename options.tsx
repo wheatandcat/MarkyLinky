@@ -6,7 +6,12 @@ import titleImage from "data-base64:~assets/title.png"
 import { useEffect, useState } from "react"
 
 import { supabase } from "~core/supabase"
+import Loading from "~uiParts/Loading"
+import Information from "~uiParts/Login/Information"
+import Login from "~uiParts/Login/Login"
+import Success from "~uiParts/Success"
 
+import { getAllItems, insertItems } from "./lib/database"
 import { type Data } from "./lib/storage"
 
 import "./style.css"
@@ -21,8 +26,8 @@ function IndexOptions() {
     })
   })
 
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [fade, setFade] = useState(false)
 
   useEffect(() => {
     async function init() {
@@ -34,48 +39,14 @@ function IndexOptions() {
       }
       if (data.session) {
         setUser(data.session.user)
-        sendToBackground({
-          name: "init-session",
-          body: {
-            refresh_token: data.session.refresh_token,
-            access_token: data.session.access_token
-          }
+        chrome.runtime.sendMessage({
+          type: "Login"
         })
       }
     }
 
     init()
   }, [])
-
-  const handleEmailLogin = async (
-    type: "LOGIN" | "SIGNUP",
-    username: string,
-    password: string
-  ) => {
-    try {
-      const {
-        error,
-        data: { user }
-      } =
-        type === "LOGIN"
-          ? await supabase.auth.signInWithPassword({
-              email: username,
-              password
-            })
-          : await supabase.auth.signUp({ email: username, password })
-
-      if (error) {
-        alert(`Error with auth: ${error.message}`)
-      } else if (!user) {
-        alert("Signup successful, confirmation mail should be sent soon!")
-      } else {
-        setUser(user)
-      }
-    } catch (error) {
-      console.log("error", error)
-      alert(error.error_description || error)
-    }
-  }
 
   const handleOAuthLogin = async (provider: Provider, scopes = "email") => {
     await supabase.auth.signInWithOAuth({
@@ -87,15 +58,24 @@ function IndexOptions() {
     })
   }
 
+  const onSuccess = () => {
+    setFade(true)
+
+    setTimeout(() => {
+      setFade(false)
+    }, 2000)
+  }
+
   const handleAsync = async () => {
+    setLoading(true)
+    setFade(false)
     const items = (await storage.get<Data[]>("saveItems")) ?? []
 
-    const { data: getItems, error: getErr } = await supabase
-      .from("items")
-      .select()
-      .eq("uuid", user.id)
+    const { data: getItems, error: getErr } = await getAllItems(user.id)
     if (getErr) {
       alert(`取得に失敗しました。:${getErr.message}`)
+      setLoading(false)
+      return
     }
 
     const filterURL = getItems?.map((item) => item.url)
@@ -114,16 +94,20 @@ function IndexOptions() {
 
     if (saveItems.length === 0) {
       await dataSync(saveItems, getItems)
+      setLoading(false)
+      onSuccess()
       return
     }
 
-    console.log("save:", saveItems)
-
-    const { error } = await supabase.from("items").insert(saveItems)
+    const { error } = await insertItems(saveItems)
     if (error) {
       alert(`同期に失敗しました。:${error.message}`)
+      setLoading(false)
+      return
     }
     await dataSync(saveItems, getItems)
+    setLoading(false)
+    onSuccess()
   }
 
   const dataSync = async (saveItems, getItems) => {
@@ -144,6 +128,13 @@ function IndexOptions() {
 
   return (
     <main>
+      <div
+        className={`transition-all duration-200	 ${
+          fade ? "opacity-100" : "opacity-0"
+        } absolute top-3 right-10`}>
+        <Success onClose={() => setFade(false)} />
+      </div>
+
       <div className="py-3 pl-3 bg-primary-300">
         <img src={titleImage} alt="title logo" width={200} />
       </div>
@@ -161,25 +152,23 @@ function IndexOptions() {
             <>
               <div>
                 <label className="block mb-1 text-xs font-medium text-gray-400 dark:text-white">
-                  Email:
+                  メールアドレス:
                 </label>
                 <p className="text-base font-semibold text-gray-600 dark:text-white">
                   {user.email}
                 </p>
-                <br />
-                <label className="block mb-1 text-xs font-medium text-gray-400 dark:text-white">
-                  User ID:
-                </label>
-                <p className="text-base font-semibold text-gray-600 dark:text-white">
-                  {user.id}
-                </p>
               </div>
-              <br />
 
               <div className="flex flex-col justify-center py-5">
                 <button
-                  className=" bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-                  onClick={() => handleAsync()}>
+                  className=" bg-blue-500 hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-600 relative text-white font-bold py-2 px-4 rounded-full"
+                  onClick={() => handleAsync()}
+                  disabled={loading}>
+                  {!!loading && (
+                    <div className="absolute left-4">
+                      <Loading />
+                    </div>
+                  )}
                   データ同期
                 </button>
                 <br />
@@ -188,63 +177,18 @@ function IndexOptions() {
                   onClick={() => {
                     supabase.auth.signOut()
                     setUser(null)
+                    chrome.runtime.sendMessage({
+                      type: "Logout"
+                    })
                   }}>
                   ログアウト
                 </button>
               </div>
             </>
           )}
-          {!user && (
-            <>
-              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Email
-              </label>
-              <input
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                type="text"
-                placeholder="Your Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              <br />
-              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Password
-              </label>
-              <input
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                type="password"
-                placeholder="Your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <br />
-              <br />
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-                onClick={() => {
-                  handleEmailLogin("SIGNUP", username, password)
-                }}>
-                新規登録
-              </button>
-              <br />
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-                onClick={() => {
-                  handleEmailLogin("LOGIN", username, password)
-                }}>
-                ログイン
-              </button>
-              <br />
-              <button
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
-                onClick={() => {
-                  handleOAuthLogin("github")
-                }}>
-                GitHubでログイン
-              </button>
-            </>
-          )}
+          {!user && <Login onOAuthLogin={handleOAuthLogin} />}
         </div>
+        <Information />
       </div>
     </main>
   )

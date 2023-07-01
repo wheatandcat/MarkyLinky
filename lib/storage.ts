@@ -4,3 +4,7 @@ export type Data = {
   favIconUrl: string;
   created: string;
 };
+
+export type Item = Data & {
+  uuid: string;
+};

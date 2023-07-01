@@ -1,7 +1,7 @@
 {
   "name": "marky-linky",
   "displayName": "MarkyLinky",
-  "version": "0.0.1",
+  "version": "0.9.0",
   "description": "URLを保存/削除、Markdownを出力ができるブラウザ拡張。",
   "author": "wheatandcat",
   "scripts": {

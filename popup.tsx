@@ -1,30 +1,100 @@
+import { Storage } from "@plasmohq/storage"
 import { useStorage } from "@plasmohq/storage/hook"
+import type { User } from "@supabase/supabase-js"
 import titleImage from "data-base64:~assets/title.png"
 import webImage from "data-base64:~assets/web.png"
 import { useEffect, useState } from "react"
 import { DarkModeSwitch } from "react-toggle-dark-mode"
+
+import { supabase } from "~core/supabase"
+import {
+  deleteItem,
+  deleteItems,
+  getAllItems,
+  insertItem,
+  insertItems
+} from "~lib/database"
 
 import { type Data } from "./lib/storage"
 import AddButton from "./uiParts/AddButton"
 import CloseButton from "./uiParts/CloseButton"
 import CopyButton from "./uiParts/CopyButton"
 import Search from "./uiParts/Search"
+import SettingIcon from "./uiParts/SettingIcon"
 
 import "./style.css"
+
+const storage = new Storage()
 
 localStorage.theme = "dark"
 
 function IndexPopup() {
+  const [user, setUser] = useStorage<User>({
+    key: "user",
+    instance: new Storage({
+      area: "local"
+    })
+  })
+
   const [currentPage, setCurrentPage] = useState<Data>({
     title: "",
     url: "",
-    favIconUrl: ""
+    favIconUrl: "",
+    created: new Date().toISOString()
   })
   const [removeButton, setRemoveButton] = useState(false)
   const [items, setItems] = useStorage<Data[]>("saveItems", [])
   const [render, setRender] = useState(0)
   const [search, setSearch] = useState("")
   const [mode, setMode] = useStorage<"light" | "dark">("theme", "light")
+
+  useEffect(() => {
+    async function init() {
+      const { data, error } = await supabase.auth.getSession()
+      if (error) {
+        console.error(error)
+        return
+      }
+      if (data.session) {
+        setUser(data.session.user)
+        chrome.runtime.sendMessage({
+          type: "Login"
+        })
+        storage.get<Data[]>("syncAddItems").then(async (syncAddItems) => {
+          if (syncAddItems.length > 0) {
+            await insertItems(
+              syncAddItems.map((v) => ({
+                uuid: data.session.user.id,
+                title: v.title,
+                url: v.url,
+                favIconUrl: v.favIconUrl,
+                created: v.created
+              }))
+            )
+            storage.remove("syncAddItems")
+          }
+        })
+        storage.get<Data[]>("syncDeleteItems").then(async (syncDeleteItems) => {
+          if (syncDeleteItems.length > 0) {
+            await deleteItems(
+              data.session.user.id,
+              syncDeleteItems.map((v) => v.url)
+            )
+            storage.remove("syncDeleteItems")
+          }
+        })
+        const { data: items, error } = await getAllItems(data.session.user.id)
+        if (error) {
+          alert("データの同期に失敗しました")
+        }
+        if (items) {
+          setItems(items)
+        }
+      }
+    }
+
+    init()
+  }, [])
 
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -34,7 +104,8 @@ function IndexPopup() {
       setCurrentPage({
         title: activeTab.title,
         url: activeTab.url,
-        favIconUrl: activeTab.favIconUrl
+        favIconUrl: activeTab.favIconUrl,
+        created: new Date().toISOString()
       })
 
       const isCurrentPageURL = items.some((v) => v.url === activeTab.url)
@@ -54,6 +125,16 @@ function IndexPopup() {
   const onSave = async () => {
     await setItems((prev) => [...prev, currentPage])
 
+    if (user) {
+      insertItem({
+        uuid: user?.id ?? "",
+        title: currentPage.title,
+        url: currentPage.url,
+        favIconUrl: currentPage.favIconUrl,
+        created: currentPage.created
+      })
+    }
+
     setRemoveButton(true)
   }
 
@@ -69,6 +150,10 @@ function IndexPopup() {
       prev.splice(index, 1)
       return prev
     })
+
+    if (user) {
+      deleteItem(user.id, item.url)
+    }
 
     setRender(render + 1)
   }
@@ -101,14 +186,23 @@ function IndexPopup() {
           width: "400px"
         }}>
         <div className="flex px-4 items-center justify-between py-2">
-          <img src={titleImage} alt="title logo" width={100} />,
-          <DarkModeSwitch
-            checked={mode === "dark"}
-            moonColor="#e6b422"
-            sunColor="#f8b862"
-            onChange={(dark) => setMode(dark ? "dark" : "light")}
-            size={20}
-          />
+          <img src={titleImage} alt="title logo" width={100} />
+          <div className="flex items-center">
+            <div className="px-2">
+              <DarkModeSwitch
+                checked={mode === "dark"}
+                moonColor="#e6b422"
+                sunColor="#f8b862"
+                onChange={(dark) => setMode(dark ? "dark" : "light")}
+                size={20}
+              />
+            </div>
+            <button onClick={() => chrome.runtime.openOptionsPage()}>
+              <SettingIcon
+                color={mode === "dark" ? " text-white" : "text-gray-500"}
+              />
+            </button>
+          </div>
         </div>
         <hr className="h-px bg-gray-200 border-0 dark:bg-gray-700" />
         <div className="flex items-center pl-4 pr-1 pt-3 pb-3">
@@ -125,7 +219,6 @@ function IndexPopup() {
             )}
           </div>
         </div>
-
         <div className="text-xs">
           {filteredItems.map((v, index) => (
             <div key={String(index)}>

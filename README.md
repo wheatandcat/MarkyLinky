@@ -2,6 +2,9 @@
 
 <img src="./doc/main.png"  width="400"/>
 
+■ Chrome Web Store
+ - [MarkyLinky - Chrome ウェブストア](https://chrome.google.com/webstore/detail/markylinky/kjjjfmbnaamaogjpjdgeiffgjabbpmfp?hl=ja)
+
 
 ## 説明
 

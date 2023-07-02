@@ -1,4 +1,3 @@
-import { sendToBackground } from "@plasmohq/messaging"
 import { Storage } from "@plasmohq/storage"
 import { useStorage } from "@plasmohq/storage/hook"
 import type { Provider, User } from "@supabase/supabase-js"

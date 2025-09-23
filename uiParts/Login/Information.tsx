@@ -23,7 +23,8 @@ function Information() {
                 href="https://chrome.google.com/webstore/detail/markylinky/kjjjfmbnaamaogjpjdgeiffgjabbpmfp?hl=ja"
                 className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                 target="_blank"
-                rel="noopener noreferrer">
+                rel="noopener noreferrer"
+              >
                 Chrome Web Store
               </a>
             </li>
@@ -32,7 +33,8 @@ function Information() {
                 href="https://github.com/wheatandcat/MarkyLinky"
                 className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                 target="_blank"
-                rel="noopener noreferrer">
+                rel="noopener noreferrer"
+              >
                 GitHub Repository
               </a>
             </li>
@@ -40,7 +42,7 @@ function Information() {
         </div>
       </div>
     </>
-  )
+  );
 }
 
-export default Information
+export default Information;

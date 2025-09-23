@@ -1,11 +1,11 @@
-import type { Provider } from "@supabase/supabase-js"
+import type { Provider } from "@supabase/supabase-js";
 
-import GitHub from "~uiParts/Icon/GitHub"
-import Google from "~uiParts/Icon/Google"
+import GitHub from "~uiParts/Icon/GitHub";
+import Google from "~uiParts/Icon/Google";
 
 type Props = {
-  onOAuthLogin: (provider: Provider, scopes?: string) => void
-}
+  onOAuthLogin: (provider: Provider, scopes?: string) => void;
+};
 
 function Login(props: Props) {
   return (
@@ -17,7 +17,8 @@ function Login(props: Props) {
           href="https://wheatandcat.github.io/MarkyLinky/TERMS"
           className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
           target="_blank"
-          rel="noopener noreferrer">
+          rel="noopener noreferrer"
+        >
           利用規約
         </a>
         、
@@ -25,7 +26,8 @@ function Login(props: Props) {
           href="https://wheatandcat.github.io/MarkyLinky/PRIVACY"
           className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
           target="_blank"
-          rel="noopener noreferrer">
+          rel="noopener noreferrer"
+        >
           プライバシーポリシー
         </a>
         に同意したい方は、以下のボタンからログインしてください。
@@ -34,8 +36,9 @@ function Login(props: Props) {
       <button
         className="bg-blue-500 hover:bg-blue-700 relative flex justify-center items-center text-white font-bold py-2 px-4 rounded-full"
         onClick={() => {
-          props.onOAuthLogin("google")
-        }}>
+          props.onOAuthLogin("google");
+        }}
+      >
         <div className="absolute left-3">
           <Google />
         </div>
@@ -45,8 +48,9 @@ function Login(props: Props) {
       <button
         className="bg-gray-500 hover:bg-gray-700 relative flex justify-center items-center text-white font-bold py-2 px-4 rounded-full"
         onClick={() => {
-          props.onOAuthLogin("github")
-        }}>
+          props.onOAuthLogin("github");
+        }}
+      >
         <div className="absolute left-3">
           <GitHub />
         </div>
@@ -54,7 +58,7 @@ function Login(props: Props) {
       </button>
       <br />
     </>
-  )
+  );
 }
 
-export default Login
+export default Login;

@@ -1,6 +1,6 @@
 {
   "editor.codeActionsOnSave": {
-    "quickfix.rome": true
+    "quickfix.rome": "explicit"
   },
   "editor.defaultFormatter": "rome.rome",
   "[typescript]": {

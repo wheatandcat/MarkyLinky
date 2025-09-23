@@ -1,65 +1,65 @@
-import { Storage } from "@plasmohq/storage"
-import { useStorage } from "@plasmohq/storage/hook"
-import type { User } from "@supabase/supabase-js"
-import titleImage from "data-base64:~assets/title.png"
-import webImage from "data-base64:~assets/web.png"
-import { useEffect, useState } from "react"
-import { DarkModeSwitch } from "react-toggle-dark-mode"
+import { Storage } from "@plasmohq/storage";
+import { useStorage } from "@plasmohq/storage/hook";
+import type { User } from "@supabase/supabase-js";
+import titleImage from "data-base64:~assets/title.png";
+import webImage from "data-base64:~assets/web.png";
+import { useEffect, useState } from "react";
+import { DarkModeSwitch } from "react-toggle-dark-mode";
 
-import { supabase } from "~core/supabase"
+import { supabase } from "~core/supabase";
 import {
   deleteItem,
   deleteItems,
   getAllItems,
   insertItem,
-  insertItems
-} from "~lib/database"
+  insertItems,
+} from "~lib/database";
 
-import { type Data } from "./lib/storage"
-import AddButton from "./uiParts/AddButton"
-import CloseButton from "./uiParts/CloseButton"
-import CopyButton from "./uiParts/CopyButton"
-import Search from "./uiParts/Search"
-import SettingIcon from "./uiParts/SettingIcon"
+import type { Data } from "./lib/storage";
+import AddButton from "./uiParts/AddButton";
+import CloseButton from "./uiParts/CloseButton";
+import CopyButton from "./uiParts/CopyButton";
+import Search from "./uiParts/Search";
+import SettingIcon from "./uiParts/SettingIcon";
 
-import "./style.css"
+import "./style.css";
 
-const storage = new Storage()
+const storage = new Storage();
 
-localStorage.theme = "dark"
+localStorage.theme = "dark";
 
 function IndexPopup() {
   const [user, setUser] = useStorage<User>({
     key: "user",
     instance: new Storage({
-      area: "local"
-    })
-  })
+      area: "local",
+    }),
+  });
 
   const [currentPage, setCurrentPage] = useState<Data>({
     title: "",
     url: "",
     favIconUrl: "",
-    created: new Date().toISOString()
-  })
-  const [removeButton, setRemoveButton] = useState(false)
-  const [items, setItems] = useStorage<Data[]>("saveItems", [])
-  const [render, setRender] = useState(0)
-  const [search, setSearch] = useState("")
-  const [mode, setMode] = useStorage<"light" | "dark">("theme", "light")
+    created: new Date().toISOString(),
+  });
+  const [removeButton, setRemoveButton] = useState(false);
+  const [items, setItems] = useStorage<Data[]>("saveItems", []);
+  const [render, setRender] = useState(0);
+  const [search, setSearch] = useState("");
+  const [mode, setMode] = useStorage<"light" | "dark">("theme", "light");
 
   useEffect(() => {
     async function init() {
-      const { data, error } = await supabase.auth.getSession()
+      const { data, error } = await supabase.auth.getSession();
       if (error) {
-        console.error(error)
-        return
+        console.error(error);
+        return;
       }
       if (data.session) {
-        setUser(data.session.user)
+        setUser(data.session.user);
         chrome.runtime.sendMessage({
-          type: "Login"
-        })
+          type: "Login",
+        });
         storage.get<Data[]>("syncAddItems").then(async (syncAddItems) => {
           if (syncAddItems.length > 0) {
             await insertItems(
@@ -68,62 +68,62 @@ function IndexPopup() {
                 title: v.title,
                 url: v.url,
                 favIconUrl: v.favIconUrl,
-                created: v.created
+                created: v.created,
               }))
-            )
-            storage.remove("syncAddItems")
+            );
+            storage.remove("syncAddItems");
           }
-        })
+        });
         storage.get<Data[]>("syncDeleteItems").then(async (syncDeleteItems) => {
           if (syncDeleteItems.length > 0) {
             await deleteItems(
               data.session.user.id,
               syncDeleteItems.map((v) => v.url)
-            )
-            storage.remove("syncDeleteItems")
+            );
+            storage.remove("syncDeleteItems");
           }
-        })
-        const { data: items, error } = await getAllItems(data.session.user.id)
+        });
+        const { data: items, error } = await getAllItems(data.session.user.id);
         if (error) {
-          alert("データの同期に失敗しました")
+          alert("データの同期に失敗しました");
         }
         if (items) {
-          setItems(items)
+          setItems(items);
         }
       }
     }
 
-    init()
-  }, [])
+    init();
+  }, []);
 
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const activeTab = tabs[0]
-      if (!activeTab) return
+      const activeTab = tabs[0];
+      if (!activeTab) return;
 
       setCurrentPage({
         title: activeTab.title,
         url: activeTab.url,
         favIconUrl: activeTab.favIconUrl,
-        created: new Date().toISOString()
-      })
+        created: new Date().toISOString(),
+      });
 
-      const isCurrentPageURL = items.some((v) => v.url === activeTab.url)
+      const isCurrentPageURL = items.some((v) => v.url === activeTab.url);
       if (isCurrentPageURL) {
-        setRemoveButton(true)
+        setRemoveButton(true);
       } else {
-        setRemoveButton(false)
+        setRemoveButton(false);
       }
-    })
+    });
     chrome.runtime.onMessage.addListener((request) => {
       if (request.type === "UPDATE") {
-        setRender(render + 1)
+        setRender(render + 1);
       }
-    })
-  }, [items, removeButton])
+    });
+  }, [items, removeButton, render]);
 
   const onSave = async () => {
-    await setItems((prev) => [...prev, currentPage])
+    await setItems((prev) => [...prev, currentPage]);
 
     if (user) {
       insertItem({
@@ -131,60 +131,61 @@ function IndexPopup() {
         title: currentPage.title,
         url: currentPage.url,
         favIconUrl: currentPage.favIconUrl,
-        created: currentPage.created
-      })
+        created: currentPage.created,
+      });
     }
 
-    setRemoveButton(true)
-  }
+    setRemoveButton(true);
+  };
 
   const onRemove = async (index: number) => {
-    const item = items[index]
+    const item = items[index];
     if (item) {
       if (currentPage.url === item.url) {
-        setRemoveButton(false)
+        setRemoveButton(false);
       }
     }
 
     await setItems((prev) => {
-      prev.splice(index, 1)
-      return prev
-    })
+      prev.splice(index, 1);
+      return prev;
+    });
 
     if (user) {
-      deleteItem(user.id, item.url)
+      deleteItem(user.id, item.url);
     }
 
-    setRender(render + 1)
-  }
+    setRender(render + 1);
+  };
 
   const onCopy = async (index: number) => {
-    const item = items[index]
+    const item = items[index];
     if (item) {
-      const markdown = `[${item.title}](${item.url})`
-      navigator.clipboard.writeText(markdown)
+      const markdown = `[${item.title}](${item.url})`;
+      navigator.clipboard.writeText(markdown);
     }
-  }
+  };
 
   const onRemoveURL = async () => {
-    const index = items.findIndex((v) => v.url === currentPage.url)
-    if (index === -1) return
-    onRemove(index)
-    setRemoveButton(false)
-  }
+    const index = items.findIndex((v) => v.url === currentPage.url);
+    if (index === -1) return;
+    onRemove(index);
+    setRemoveButton(false);
+  };
 
   const filteredItems = items.filter((v) => {
-    if (search === "") return true
-    return v.title.toLocaleLowerCase().includes(search.toLocaleLowerCase())
-  })
+    if (search === "") return true;
+    return v.title.toLocaleLowerCase().includes(search.toLocaleLowerCase());
+  });
 
   return (
     <div className={mode}>
       <div
         className="pb-3 dark:bg-gray-800"
         style={{
-          width: "400px"
-        }}>
+          width: "400px",
+        }}
+      >
         <div className="flex px-4 items-center justify-between py-2">
           <img src={titleImage} alt="title logo" width={100} />
           <div className="flex items-center">
@@ -197,7 +198,10 @@ function IndexPopup() {
                 size={20}
               />
             </div>
-            <button onClick={() => chrome.runtime.openOptionsPage()}>
+            <button
+              onClick={() => chrome.runtime.openOptionsPage()}
+              type="button"
+            >
               <SettingIcon
                 color={mode === "dark" ? " text-white" : "text-gray-500"}
               />
@@ -213,7 +217,9 @@ function IndexPopup() {
             ) : (
               <button
                 className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-full"
-                onClick={() => onRemoveURL()}>
+                onClick={() => onRemoveURL()}
+                type="button"
+              >
                 削除
               </button>
             )}
@@ -228,13 +234,13 @@ function IndexPopup() {
                     <img
                       src={v.favIconUrl}
                       className="w-4 h-4 mr-1"
-                      alt="image favIcon"
+                      alt="favIcon"
                     />
                   ) : (
                     <img
                       src={webImage}
                       className="w-4 h-4 mr-1"
-                      alt="image favIcon"
+                      alt="favIcon"
                       style={mode === "dark" ? { filter: "invert(1)" } : null}
                     />
                   )}
@@ -254,7 +260,7 @@ function IndexPopup() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default IndexPopup
+export default IndexPopup;

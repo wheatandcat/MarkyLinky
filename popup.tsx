@@ -94,7 +94,7 @@ function IndexPopup() {
     }
 
     init();
-  }, []);
+  }, [setUser, setItems]);
 
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -115,12 +115,22 @@ function IndexPopup() {
         setRemoveButton(false);
       }
     });
-    chrome.runtime.onMessage.addListener((request) => {
+  }, [items]);
+
+  useEffect(() => {
+    const messageListener = (request: { type: string }) => {
       if (request.type === "UPDATE") {
-        setRender(render + 1);
+        setRender((prev) => prev + 1);
       }
-    });
-  }, [items, removeButton, render]);
+    };
+
+    chrome.runtime.onMessage.addListener(messageListener);
+
+    // クリーンアップ関数でリスナーを削除
+    return () => {
+      chrome.runtime.onMessage.removeListener(messageListener);
+    };
+  }, []);
 
   const onSave = async () => {
     await setItems((prev) => [...prev, currentPage]);

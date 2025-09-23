@@ -1,6 +1,6 @@
 type Props = {
-  onChangeText: (text: string) => void
-}
+  onChangeText: (text: string) => void;
+};
 
 function Search(props: Props) {
   return (
@@ -12,7 +12,8 @@ function Search(props: Props) {
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg">
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -29,7 +30,7 @@ function Search(props: Props) {
         onChange={(e) => props.onChangeText(e.target.value)}
       />
     </div>
-  )
+  );
 }
 
-export default Search
+export default Search;

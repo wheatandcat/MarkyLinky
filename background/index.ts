@@ -35,7 +35,8 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
       const syncDeleteItem = items.find((v) => v.url === activeTab.url);
       if (login) {
         if (syncDeleteItem) {
-          const syncDeleteItems = (await storage.get<Data[]>("syncDeleteItems")) ?? [];
+          const syncDeleteItems =
+            (await storage.get<Data[]>("syncDeleteItems")) ?? [];
           syncDeleteItems.push(syncDeleteItem);
           await storage.set("syncDeleteItems", syncDeleteItems);
         }

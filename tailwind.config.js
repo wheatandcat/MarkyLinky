@@ -8,11 +8,11 @@ module.exports = {
         primary: {
           300: "#C8E3DF",
           600: "#559092",
-          700: "#3F6B6B"
-        }
-      }
-    }
+          700: "#3F6B6B",
+        },
+      },
+    },
   },
   content: ["./**/*.tsx"],
-  plugins: []
-}
+  plugins: [],
+};

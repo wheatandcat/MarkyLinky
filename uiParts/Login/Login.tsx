@@ -38,6 +38,7 @@ function Login(props: Props) {
         onClick={() => {
           props.onOAuthLogin("google");
         }}
+        type="button"
       >
         <div className="absolute left-3">
           <Google />
@@ -50,6 +51,7 @@ function Login(props: Props) {
         onClick={() => {
           props.onOAuthLogin("github");
         }}
+        type="button"
       >
         <div className="absolute left-3">
           <GitHub />

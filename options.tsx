@@ -11,7 +11,7 @@ import Login from "~uiParts/Login/Login";
 import Success from "~uiParts/Success";
 
 import { getAllItems, insertItems } from "./lib/database";
-import { type Data } from "./lib/storage";
+import type { Data } from "./lib/storage";
 
 import "./style.css";
 
@@ -45,7 +45,7 @@ function IndexOptions() {
     }
 
     init();
-  }, []);
+  }, [setUser]);
 
   const handleOAuthLogin = async (provider: Provider, scopes = "email") => {
     await supabase.auth.signInWithOAuth({
@@ -152,7 +152,10 @@ function IndexOptions() {
           {user && (
             <>
               <div>
-                <label className="block mb-1 text-xs font-medium text-gray-400 dark:text-white">
+                <label
+                  htmlFor="email"
+                  className="block mb-1 text-xs font-medium text-gray-400 dark:text-white"
+                >
                   メールアドレス:
                 </label>
                 <p className="text-base font-semibold text-gray-600 dark:text-white">

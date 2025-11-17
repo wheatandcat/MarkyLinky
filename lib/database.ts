@@ -1,5 +1,5 @@
 import { supabase } from "~core/supabase";
-import { type Item } from "./storage";
+import type { Item } from "./storage";
 
 export const getAllItems = async (uuid: string) => {
   return await supabase.from("items").select().eq("uuid", uuid);

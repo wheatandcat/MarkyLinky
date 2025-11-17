@@ -45,7 +45,11 @@ function IndexOptions() {
     }
 
     init();
+<<<<<<< HEAD
   }, [setUser]);
+=======
+  }, []);
+>>>>>>> 037151a235797c205cb7e93768f2109a3ae0835f
 
   const handleOAuthLogin = async (provider: Provider, scopes = "email") => {
     await supabase.auth.signInWithOAuth({

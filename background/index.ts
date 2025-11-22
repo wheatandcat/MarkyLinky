@@ -1,5 +1,5 @@
 import { Storage } from "@plasmohq/storage";
-import { type Data } from "../lib/storage";
+import type { Data } from "../lib/storage";
 
 const storage = new Storage();
 
@@ -97,5 +97,3 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 // 初回起動時にもタブ情報を取得
 getActiveTabInfo();
-
-export {};

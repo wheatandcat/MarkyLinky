@@ -1,7 +1,7 @@
+import titleImage from "data-base64:~assets/title.png";
 import { Storage } from "@plasmohq/storage";
 import { useStorage } from "@plasmohq/storage/hook";
 import type { Provider, User } from "@supabase/supabase-js";
-import titleImage from "data-base64:~assets/title.png";
 import { useEffect, useState } from "react";
 
 import { supabase } from "~core/supabase";
@@ -11,7 +11,7 @@ import Login from "~uiParts/Login/Login";
 import Success from "~uiParts/Success";
 
 import { getAllItems, insertItems } from "./lib/database";
-import { type Data } from "./lib/storage";
+import type { Data } from "./lib/storage";
 
 import "./style.css";
 
@@ -45,7 +45,7 @@ function IndexOptions() {
     }
 
     init();
-  }, []);
+  }, [setUser]);
 
   const handleOAuthLogin = async (provider: Provider, scopes = "email") => {
     await supabase.auth.signInWithOAuth({
@@ -118,11 +118,17 @@ function IndexOptions() {
         favIconUrl: item.favIconUrl,
         created: item.created,
       }))
-      .sort(function (a, b) {
-        return new Date(b.created).getTime() - new Date(a.created).getTime();
-      });
+      .sort(
+        (a, b) => new Date(b.created).getTime() - new Date(a.created).getTime()
+      );
 
-    await storage.set("saveItems", mixItems);
+    console.log("mixItems", mixItems);
+
+    try {
+      await storage.set("saveItems", mixItems);
+    } catch (error) {
+      console.error("error", error);
+    }
   };
 
   return (
@@ -152,7 +158,10 @@ function IndexOptions() {
           {user && (
             <>
               <div>
-                <label className="block mb-1 text-xs font-medium text-gray-400 dark:text-white">
+                <label
+                  htmlFor="email"
+                  className="block mb-1 text-xs font-medium text-gray-400 dark:text-white"
+                >
                   メールアドレス:
                 </label>
                 <p className="text-base font-semibold text-gray-600 dark:text-white">

@@ -31,3 +31,22 @@ $ yarn build
 ```bash
 $ yarn package
 ```
+
+
+### データベース
+
+```bash
+$ supabase db push
+```
+
+### マイグレーションファイル作成
+
+```bash
+$ supabase migration new xxxxxx
+```
+
+### マイグレーション
+
+```bash
+$ supabase migration up
+```

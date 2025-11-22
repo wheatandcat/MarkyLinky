@@ -1,7 +1,7 @@
+import titleImage from "data-base64:~assets/title.png";
 import { Storage } from "@plasmohq/storage";
 import { useStorage } from "@plasmohq/storage/hook";
 import type { Provider, User } from "@supabase/supabase-js";
-import titleImage from "data-base64:~assets/title.png";
 import { useEffect, useState } from "react";
 
 import { supabase } from "~core/supabase";
@@ -45,11 +45,7 @@ function IndexOptions() {
     }
 
     init();
-<<<<<<< HEAD
   }, [setUser]);
-=======
-  }, []);
->>>>>>> 037151a235797c205cb7e93768f2109a3ae0835f
 
   const handleOAuthLogin = async (provider: Provider, scopes = "email") => {
     await supabase.auth.signInWithOAuth({
@@ -122,11 +118,17 @@ function IndexOptions() {
         favIconUrl: item.favIconUrl,
         created: item.created,
       }))
-      .sort(function (a, b) {
-        return new Date(b.created).getTime() - new Date(a.created).getTime();
-      });
+      .sort(
+        (a, b) => new Date(b.created).getTime() - new Date(a.created).getTime()
+      );
 
-    await storage.set("saveItems", mixItems);
+    console.log("mixItems", mixItems);
+
+    try {
+      await storage.set("saveItems", mixItems);
+    } catch (error) {
+      console.error("error", error);
+    }
   };
 
   return (

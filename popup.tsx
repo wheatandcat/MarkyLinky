@@ -1,11 +1,10 @@
+import titleImage from "data-base64:~assets/title.png";
+import webImage from "data-base64:~assets/web.png";
 import { Storage } from "@plasmohq/storage";
 import { useStorage } from "@plasmohq/storage/hook";
 import type { User } from "@supabase/supabase-js";
-import titleImage from "data-base64:~assets/title.png";
-import webImage from "data-base64:~assets/web.png";
 import { useEffect, useState } from "react";
 import { DarkModeSwitch } from "react-toggle-dark-mode";
-
 import { supabase } from "~core/supabase";
 import {
   deleteItem,
@@ -14,14 +13,12 @@ import {
   insertItem,
   insertItems,
 } from "~lib/database";
-
 import type { Data } from "./lib/storage";
 import AddButton from "./uiParts/AddButton";
 import CloseButton from "./uiParts/CloseButton";
 import CopyButton from "./uiParts/CopyButton";
 import Search from "./uiParts/Search";
 import SettingIcon from "./uiParts/SettingIcon";
-
 import "./style.css";
 
 const storage = new Storage();

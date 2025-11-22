@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
-    "package": "plasmo package"
+    "package": "plasmo package",
+    "format": "npx @biomejs/biome check --write ./*"
   },
   "dependencies": {
     "@plasmohq/messaging": "^0.7.2",

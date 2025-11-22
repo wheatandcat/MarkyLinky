@@ -40,3 +40,5 @@ keys.json
 key.json
 # typescript
 .tsbuildinfo
+schema.ts
+.test

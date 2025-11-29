@@ -58,6 +58,7 @@ function IndexPopup() {
           type: "Login",
         });
         storage.get<Data[]>("syncAddItems").then(async (syncAddItems) => {
+          if (!syncAddItems) return;
           if (syncAddItems.length > 0) {
             await insertItems(
               syncAddItems.map((v) => ({
@@ -72,6 +73,7 @@ function IndexPopup() {
           }
         });
         storage.get<Data[]>("syncDeleteItems").then(async (syncDeleteItems) => {
+          if (!syncDeleteItems) return;
           if (syncDeleteItems.length > 0) {
             await deleteItems(
               data.session.user.id,
@@ -130,16 +132,21 @@ function IndexPopup() {
   }, []);
 
   const onSave = async () => {
-    await setItems((prev) => [...prev, currentPage]);
+    console.log("items", items);
+    setItems((prev) => [...prev, currentPage]);
 
     if (user) {
-      insertItem({
-        uuid: user?.id ?? "",
-        title: currentPage.title,
-        url: currentPage.url,
-        favIconUrl: currentPage.favIconUrl,
-        created: currentPage.created,
-      });
+      try {
+        await insertItem({
+          uuid: user?.id ?? "",
+          title: currentPage.title,
+          url: currentPage.url,
+          favIconUrl: currentPage.favIconUrl,
+          created: currentPage.created,
+        });
+      } catch (error) {
+        alert(`データの保存に失敗しました。:${error.message}`);
+      }
     }
 
     setRemoveButton(true);

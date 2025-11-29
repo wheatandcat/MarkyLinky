@@ -33,7 +33,7 @@ $ yarn package
 ```
 
 
-### データベース
+### データベース反映
 
 ```bash
 $ supabase db push

@@ -1,6 +1,45 @@
-function Card() {
+import { useState } from "react";
+
+type Props = {
+  id: number;
+  title: string;
+  token: string;
+  created: string;
+  onDelete: (id: number) => Promise<boolean>;
+};
+
+function Card(props: Props) {
+  const d = new Date(props.created);
+  const [fade, setFade] = useState(false);
+
+  const onCopy = () => {
+    setFade(true);
+    navigator.clipboard.writeText(props.token);
+
+    setTimeout(() => {
+      setFade(false);
+    }, 1000);
+  };
+
+  const created =
+    `${d.getFullYear()}/` +
+    `${String(d.getMonth() + 1).padStart(2, "0")}/` +
+    `${String(d.getDate()).padStart(2, "0")} ` +
+    `${String(d.getHours()).padStart(2, "0")}:` +
+    `${String(d.getMinutes()).padStart(2, "0")}`;
+
   return (
-    <div className="flex gap-2 items-center mx-2 my-6 border border-gray-300 rounded-lg p-2">
+    <div className="flex flex-col sm:flex-row gap-2 items-center mx-2 my-6 border border-gray-300 rounded-lg p-2 relative">
+      <div
+        className={`transition-all duration-200	 ${
+          fade ? "opacity-100" : "opacity-0"
+        } absolute right-40 top-[-10px]`}
+      >
+        <div className="bg-white rounded border border-gray-300 p-2">
+          <div className="text-green-500 font-bold text-sm">コピーしました</div>
+        </div>
+      </div>
+
       <div className="px-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -22,12 +61,20 @@ function Card() {
         </svg>
       </div>
       <div>
-        <div className="text-base font-bold mb-1">title</div>
+        <div className="text-base font-bold mb-1">{props.title}</div>
         <div className="flex gap-2">
-          <div className="text-sm px-2 text-gray-500 bg-gray-100 rounded border border-gray-200 py-1">
-            sk_live_************************7890
+          <div className="text-xs sm:text-sm px-2 text-gray-500 bg-gray-100 rounded border border-gray-200 py-1 whitespace-nowrap sm:w-80">
+            {props.token.slice(0, 4)}
+            ***********************************
+            {props.token.slice(-4)}
           </div>
-          <button type="button">
+          <button
+            type="button"
+            className="rounded-md inline-flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 mr-2 p-1"
+            onClick={() => {
+              onCopy();
+            }}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -50,8 +97,14 @@ function Card() {
       </div>
       <div className="flex w-full justify-end px-2">
         <div className="flex gap-2">
-          <div className="text-gray-500 text-xs">作成日: 2025-01-01 00:00</div>
-          <button type="button">
+          <div className="text-gray-500 text-xs">作成日: {created}</div>
+          <button
+            type="button"
+            onClick={() => {
+              props.onDelete(props.id);
+            }}
+            className="rounded-md inline-flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 mr-2 p-1"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"

@@ -1,24 +1,14 @@
 import Card from "~uiParts/ApiKey/Crad";
+import Add from "~uiParts/ApiKey/Add";
+import type { ApiToken } from "~lib/storage";
 
-function List() {
-  const apiKey = [
-    {
-      title: "API Key 1",
-      token: "1234567890",
-      created: new Date().toISOString(),
-    },
-    {
-      title: "API Key 2",
-      token: "1234567890",
-      created: new Date().toISOString(),
-    },
-    {
-      title: "API Key 3",
-      token: "1234567890",
-      created: new Date().toISOString(),
-    },
-  ];
+type Props = {
+  apiTokens: ApiToken[];
+  onAddApiKey: (title: string) => Promise<boolean>;
+  onDeleteApiKey: (id: number) => Promise<boolean>;
+};
 
+function List(props: Props) {
   return (
     <div className="pb-4 max-w-2xl">
       <div className="text-sm font-bold text-gray-600">API Keys</div>
@@ -30,15 +20,14 @@ function List() {
           </li>
         </ul>
         <br />
-        <button
-          className="bg-blue-500 hover:bg-blue-700 relative flex justify-center items-center text-white font-bold py-2 px-4 rounded-full"
-          onClick={() => {}}
-          type="button"
-        >
-          + API Keyを作成
-        </button>
-
-        <Card />
+        <Add onAdd={props.onAddApiKey} />
+        {props.apiTokens.map((apiToken) => (
+          <Card
+            key={apiToken.id}
+            {...apiToken}
+            onDelete={props.onDeleteApiKey}
+          />
+        ))}
       </div>
     </div>
   );

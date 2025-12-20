@@ -8,3 +8,11 @@ export type Data = {
 export type Item = Data & {
   uuid: string;
 };
+
+export type ApiToken = {
+  id: number;
+  uuid: string;
+  title: string;
+  token: string;
+  created: string;
+};

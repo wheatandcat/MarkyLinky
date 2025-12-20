@@ -3,13 +3,13 @@ import { Storage } from "@plasmohq/storage";
 import { useStorage } from "@plasmohq/storage/hook";
 import type { Provider, User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
-
 import { supabase } from "~core/supabase";
 import Loading from "~uiParts/Loading";
 import Information from "~uiParts/Login/Information";
 import Login from "~uiParts/Login/Login";
 import Success from "~uiParts/Success";
-
+import Tips from "~uiParts/Login/Tips";
+import ApiKey from "~uiParts/ApiKey/List";
 import { getAllItems, insertItems } from "./lib/database";
 import type { Data } from "./lib/storage";
 
@@ -202,6 +202,8 @@ function IndexOptions() {
           )}
           {!user && <Login onOAuthLogin={handleOAuthLogin} />}
         </div>
+        <Tips />
+        {user && <ApiKey />}
         <Information />
       </div>
     </main>

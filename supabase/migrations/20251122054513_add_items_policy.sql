@@ -1,3 +1,4 @@
+
 CREATE POLICY "Users can select their own items"
 ON public.items
 FOR SELECT

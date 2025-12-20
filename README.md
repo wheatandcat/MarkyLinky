@@ -44,6 +44,12 @@ $ supabase migration new xxxxxx
 $ supabase migration up
 ```
 
+### supabaseのdbの型を自動生成
+
+```bash
+$ supabase gen types typescript --local > schema.ts
+```
+
 
 ### 本番環境にデータベースを反映
 

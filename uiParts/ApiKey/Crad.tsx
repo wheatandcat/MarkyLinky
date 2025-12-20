@@ -70,7 +70,7 @@ function Card(props: Props) {
           </div>
           <button
             type="button"
-            className="rounded-md inline-flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 mr-2 p-1"
+            className="rounded-md inline-flex items-center justify-center hover:bg-gray-200 mr-2 p-1"
             onClick={() => {
               onCopy();
             }}
@@ -96,7 +96,7 @@ function Card(props: Props) {
         </div>
       </div>
       <div className="flex w-full justify-end px-2">
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <div className="text-gray-500 text-xs">作成日: {created}</div>
           <button
             type="button"

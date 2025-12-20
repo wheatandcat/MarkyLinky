@@ -171,7 +171,10 @@ const corsHeaders = {
 };
 
 Deno.serve(async (req) => {
-  const { url, token } = await req.json();
+  const requestUrl = new URL(req.url);
+  const url = requestUrl.searchParams.get("url");
+  const token = requestUrl.searchParams.get("token");
+
   if (!url || !token) {
     return new Response(
       JSON.stringify({ error: "url and token are required" }),

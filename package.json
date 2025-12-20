@@ -1,7 +1,7 @@
 {
   "name": "marky-linky",
   "displayName": "MarkyLinky",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "URLを保存/削除、Markdownを出力ができるブラウザ拡張。",
   "author": "wheatandcat",
   "scripts": {
@@ -11,6 +11,7 @@
     "format": "npx @biomejs/biome check --write ./*"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.9",
     "@plasmohq/messaging": "^0.7.2",
     "@plasmohq/storage": "^1.15.0",
     "@supabase/supabase-js": "^2.57.4",

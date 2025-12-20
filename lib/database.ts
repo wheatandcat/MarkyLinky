@@ -20,3 +20,11 @@ export const deleteItem = async (uuid: string, url: string) => {
 export const deleteItems = async (uuid: string, urls: string[]) => {
   return await supabase.from("items").delete().eq("uuid", uuid).in("url", urls);
 };
+
+export const getAllApiKeys = async (uuid: string) => {
+  return await supabase.from("api_tokens").select().eq("uuid", uuid);
+};
+
+export const deleteApiKey = async (id: number) => {
+  return await supabase.from("api_tokens").delete().eq("id", id);
+};

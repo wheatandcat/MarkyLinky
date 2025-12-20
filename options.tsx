@@ -1,17 +1,22 @@
 import titleImage from "data-base64:~assets/title.png";
 import { Storage } from "@plasmohq/storage";
 import { useStorage } from "@plasmohq/storage/hook";
-import type { Provider, User } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
-
+import type { Provider, Session, User } from "@supabase/supabase-js";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "~core/supabase";
 import Loading from "~uiParts/Loading";
 import Information from "~uiParts/Login/Information";
 import Login from "~uiParts/Login/Login";
 import Success from "~uiParts/Success";
-
-import { getAllItems, insertItems } from "./lib/database";
-import type { Data } from "./lib/storage";
+import Tips from "~uiParts/Login/Tips";
+import ApiKey from "~uiParts/ApiKey/List";
+import {
+  getAllItems,
+  insertItems,
+  getAllApiKeys,
+  deleteApiKey,
+} from "./lib/database";
+import type { Data, ApiToken } from "./lib/storage";
 
 import "./style.css";
 
@@ -24,9 +29,26 @@ function IndexOptions() {
       area: "local",
     }),
   });
-
+  const [session, setSession] = useStorage<Session | null>({
+    key: "session",
+    instance: new Storage({ area: "local" }),
+  });
   const [loading, setLoading] = useState(false);
   const [fade, setFade] = useState(false);
+  const [apiTokens, setApiTokens] = useStorage<ApiToken[]>("apiTokens", []);
+
+  const getApiTokens = useCallback(async () => {
+    if (!user) return;
+    const { data: apiTokens, error: apiTokensError } = await getAllApiKeys(
+      user.id
+    );
+    if (apiTokensError) {
+      alert("API Keyの同期に失敗しました");
+    }
+    if (apiTokens) {
+      setApiTokens(apiTokens);
+    }
+  }, [user, setApiTokens]);
 
   useEffect(() => {
     async function init() {
@@ -38,6 +60,8 @@ function IndexOptions() {
       }
       if (data.session) {
         setUser(data.session.user);
+        setSession(data.session);
+
         chrome.runtime.sendMessage({
           type: "Login",
         });
@@ -45,7 +69,20 @@ function IndexOptions() {
     }
 
     init();
-  }, [setUser]);
+
+    const { data: sub } = supabase.auth.onAuthStateChange(async (_event, s) => {
+      setSession(s);
+      setUser(s?.user ?? null);
+
+      if (s) {
+        chrome.runtime.sendMessage({ type: "Login" });
+      } else {
+        chrome.runtime.sendMessage({ type: "Logout" });
+      }
+    });
+
+    return () => sub.subscription.unsubscribe();
+  }, [setUser, setSession]);
 
   const handleOAuthLogin = async (provider: Provider, scopes = "email") => {
     await supabase.auth.signInWithOAuth({
@@ -131,6 +168,40 @@ function IndexOptions() {
     }
   };
 
+  const onAddApiKey = async (title: string) => {
+    const response = await fetch(
+      `${process.env.PLASMO_PUBLIC_SUPABASE_URL}/functions/v1/create-token`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({ title }),
+      }
+    );
+    if (!response.ok) {
+      alert(`API Keyの作成に失敗しました。`);
+      return false;
+    }
+
+    getApiTokens();
+
+    return true;
+  };
+
+  const onDeleteApiKey = async (id: number) => {
+    const { error } = await deleteApiKey(id);
+    if (error) {
+      alert(`API Keyの削除に失敗しました。:${error.message}`);
+      return false;
+    }
+
+    getApiTokens();
+
+    return true;
+  };
+
   return (
     <main>
       <div
@@ -202,6 +273,14 @@ function IndexOptions() {
           )}
           {!user && <Login onOAuthLogin={handleOAuthLogin} />}
         </div>
+        <Tips />
+        {user && (
+          <ApiKey
+            apiTokens={apiTokens}
+            onAddApiKey={onAddApiKey}
+            onDeleteApiKey={onDeleteApiKey}
+          />
+        )}
         <Information />
       </div>
     </main>

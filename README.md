@@ -32,21 +32,39 @@ $ yarn build
 $ yarn package
 ```
 
-
-### データベース反映
-
-```bash
-$ supabase db push
-```
-
 ### マイグレーションファイル作成
 
 ```bash
 $ supabase migration new xxxxxx
 ```
 
-### マイグレーション
+### ローカル環境でマイグレーション
 
 ```bash
 $ supabase migration up
+```
+
+### supabaseのdbの型を自動生成
+
+```bash
+$ supabase gen types typescript --local > schema.ts
+```
+
+
+### 本番環境にデータベースを反映
+
+```bash
+$ supabase db push
+```
+
+### ローカル環境でfunctionsを起動
+
+```bash
+$ supabase functions serve --no-verify-jwt
+```
+
+### 本番環境にfunctionsをデプロイ
+
+```bash
+$ supabase functions deploy *****
 ```

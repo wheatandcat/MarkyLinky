@@ -17,6 +17,7 @@ import type { Data } from "./lib/storage";
 import AddButton from "./uiParts/AddButton";
 import CloseButton from "./uiParts/CloseButton";
 import CopyButton from "./uiParts/CopyButton";
+import Loading from "./uiParts/Loading";
 import Search from "./uiParts/Search";
 import SettingIcon from "./uiParts/SettingIcon";
 import "./style.css";
@@ -44,12 +45,14 @@ function IndexPopup() {
   const [render, setRender] = useState(0);
   const [search, setSearch] = useState("");
   const [mode, setMode] = useStorage<"light" | "dark">("theme", "light");
+  const [syncing, setSyncing] = useState(true);
 
   useEffect(() => {
     async function init() {
       const { data, error } = await supabase.auth.getSession();
       if (error) {
         console.error(error);
+        setSyncing(false);
         return;
       }
       if (data.session) {
@@ -67,7 +70,7 @@ function IndexPopup() {
                 url: v.url,
                 favIconUrl: v.favIconUrl,
                 created: v.created,
-              }))
+              })),
             );
             storage.remove("syncAddItems");
           }
@@ -77,7 +80,7 @@ function IndexPopup() {
           if (syncDeleteItems.length > 0) {
             await deleteItems(
               data.session.user.id,
-              syncDeleteItems.map((v) => v.url)
+              syncDeleteItems.map((v) => v.url),
             );
             storage.remove("syncDeleteItems");
           }
@@ -90,6 +93,7 @@ function IndexPopup() {
           setItems(items);
         }
       }
+      setSyncing(false);
     }
 
     init();
@@ -240,37 +244,44 @@ function IndexPopup() {
           </div>
         </div>
         <div className="text-xs">
-          {filteredItems.map((v, index) => (
-            <div key={String(index)}>
-              <div className="flex items-center h-6 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100 pr-16">
-                <div className="flex w-full mr-14 hover:bg-gray-100 dark:hover:bg-gray-600 h-6 items-center pl-4">
-                  {v.favIconUrl ? (
-                    <img
-                      src={v.favIconUrl}
-                      className="w-4 h-4 mr-1"
-                      alt="favIcon"
-                    />
-                  ) : (
-                    <img
-                      src={webImage}
-                      className="w-4 h-4 mr-1"
-                      alt="favIcon"
-                      style={mode === "dark" ? { filter: "invert(1)" } : null}
-                    />
-                  )}
-                  <p className="truncate">
-                    <a href={v.url} target="_blank" rel="noreferrer">
-                      {v.title}
-                    </a>
-                  </p>
-                </div>
-                <div className="absolute right-4">
-                  <CopyButton onCopy={() => onCopy(index)} />
-                  <CloseButton onRemove={() => onRemove(index)} />
+          {syncing ? (
+            <div className="flex items-center justify-center py-6 text-gray-500 dark:text-gray-300">
+              <Loading className="text-gray-500 dark:text-gray-300" />
+              同期中...
+            </div>
+          ) : (
+            filteredItems.map((v, index) => (
+              <div key={String(index)}>
+                <div className="flex items-center h-6 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100 pr-16">
+                  <div className="flex w-full mr-14 hover:bg-gray-100 dark:hover:bg-gray-600 h-6 items-center pl-4">
+                    {v.favIconUrl ? (
+                      <img
+                        src={v.favIconUrl}
+                        className="w-4 h-4 mr-1"
+                        alt="favIcon"
+                      />
+                    ) : (
+                      <img
+                        src={webImage}
+                        className="w-4 h-4 mr-1"
+                        alt="favIcon"
+                        style={mode === "dark" ? { filter: "invert(1)" } : null}
+                      />
+                    )}
+                    <p className="truncate">
+                      <a href={v.url} target="_blank" rel="noreferrer">
+                        {v.title}
+                      </a>
+                    </p>
+                  </div>
+                  <div className="absolute right-4">
+                    <CopyButton onCopy={() => onCopy(index)} />
+                    <CloseButton onRemove={() => onRemove(index)} />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>

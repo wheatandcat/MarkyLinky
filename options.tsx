@@ -156,7 +156,7 @@ function IndexOptions() {
         created: item.created,
       }))
       .sort(
-        (a, b) => new Date(b.created).getTime() - new Date(a.created).getTime()
+        (a, b) => new Date(a.created).getTime() - new Date(b.created).getTime()
       );
 
     console.log("mixItems", mixItems);

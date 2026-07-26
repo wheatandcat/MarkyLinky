@@ -42,3 +42,4 @@ key.json
 .tsbuildinfo
 schema.ts
 .test
+share-pwa/.wrangler

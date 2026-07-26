@@ -36,3 +36,11 @@ export async function isSupportedBrowser(): Promise<boolean> {
 
   return true;
 }
+
+/**
+ * ホーム画面に追加したアプリ（WebAPK）として起動しているかどうか。
+ * ブラウザのタブで開いているだけの場合はfalseになる。
+ */
+export function isStandaloneDisplayMode(): boolean {
+  return window.matchMedia("(display-mode: standalone)").matches;
+}

@@ -1,10 +1,16 @@
 import { createItem } from "./lib/createItem";
 import { extractUrl } from "./lib/extractUrl";
-import { isSupportedBrowser } from "./lib/platform";
+import { setupInstallButton } from "./lib/installPrompt";
+import {
+  isStandaloneDisplayMode,
+  isSupportedBrowser,
+} from "./lib/platform";
 import { registerServiceWorker } from "./lib/registerSw";
 import { getApiKey } from "./lib/storage";
 
 const unsupportedEl = document.querySelector<HTMLDivElement>("#unsupported")!;
+const notInstalledEl =
+  document.querySelector<HTMLDivElement>("#notInstalled")!;
 const mainEl = document.querySelector<HTMLDivElement>("#main")!;
 
 function showError(statusEl: HTMLParagraphElement, message: string) {
@@ -42,6 +48,15 @@ function showSuccess(
 async function init() {
   if (!(await isSupportedBrowser())) {
     unsupportedEl.hidden = false;
+    return;
+  }
+  if (!isStandaloneDisplayMode()) {
+    notInstalledEl.hidden = false;
+    const installButton =
+      document.querySelector<HTMLButtonElement>("#installApp")!;
+    const installStatusEl =
+      document.querySelector<HTMLParagraphElement>("#installStatus")!;
+    setupInstallButton(installButton, installStatusEl);
     return;
   }
   mainEl.hidden = false;

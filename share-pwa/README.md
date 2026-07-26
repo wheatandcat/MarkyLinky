@@ -7,13 +7,13 @@ Android の共有シートから MarkyLinky に URL を登録するための PWA
 ### ローカル起動
 
 ```bash
-$ yarn dev
+$ npm run dev
 ```
 
 ### ビルド
 
 ```bash
-$ yarn build
+$ npm run build
 ```
 
 ## 使い方
@@ -25,13 +25,13 @@ $ yarn build
 ## デプロイ（Cloudflare Pages）
 
 - Root directory: `share-pwa`
-- Build command: `yarn build`
+- Build command: `npm run build`
 - Build output directory: `dist`
 - 環境変数 `VITE_CREATE_ITEM_ENDPOINT` を Pages プロジェクトに設定
 
 Wrangler CLI から手動デプロイする場合:
 
 ```bash
-$ yarn build
+$ npm run build
 $ npx wrangler pages deploy dist --project-name=********
 ```

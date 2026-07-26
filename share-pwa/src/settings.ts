@@ -1,6 +1,6 @@
 import { isSupportedBrowser } from "./lib/platform";
 import { registerServiceWorker } from "./lib/registerSw";
-import { clearApiKey, getApiKey, setApiKey } from "./lib/storage";
+import { clearApiKey, getApiKey, maskApiKey, setApiKey } from "./lib/storage";
 
 const unsupportedEl = document.querySelector<HTMLDivElement>("#unsupported")!;
 const mainEl = document.querySelector<HTMLDivElement>("#main")!;
@@ -14,6 +14,11 @@ async function init() {
 
   registerServiceWorker();
 
+  const keyFormEl = document.querySelector<HTMLDivElement>("#keyForm")!;
+  const keyDisplayEl = document.querySelector<HTMLDivElement>("#keyDisplay")!;
+  const maskedKeyEl = document.querySelector<HTMLParagraphElement>(
+    "#maskedKey",
+  )!;
   const apiKeyInput = document.querySelector<HTMLInputElement>("#apiKey")!;
   const saveButton = document.querySelector<HTMLButtonElement>("#save")!;
   const clearButton = document.querySelector<HTMLButtonElement>("#clear")!;
@@ -24,11 +29,20 @@ async function init() {
     statusEl.className = `status ${kind}`;
   }
 
-  const savedKey = getApiKey();
-  if (savedKey) {
-    apiKeyInput.value = savedKey;
-    showStatus("APIキーは保存済みです", "success");
+  function render() {
+    const savedKey = getApiKey();
+    if (savedKey) {
+      keyFormEl.hidden = true;
+      keyDisplayEl.hidden = false;
+      maskedKeyEl.textContent = maskApiKey(savedKey);
+    } else {
+      keyFormEl.hidden = false;
+      keyDisplayEl.hidden = true;
+      apiKeyInput.value = "";
+    }
   }
+
+  render();
 
   saveButton.addEventListener("click", () => {
     const value = apiKeyInput.value.trim();
@@ -38,12 +52,13 @@ async function init() {
     }
     setApiKey(value);
     showStatus("保存しました", "success");
+    render();
   });
 
   clearButton.addEventListener("click", () => {
     clearApiKey();
-    apiKeyInput.value = "";
     showStatus("削除しました", "success");
+    render();
   });
 }
 

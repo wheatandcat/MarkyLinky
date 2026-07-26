@@ -24,29 +24,40 @@
       <p>
         Brave など Chrome 以外のブラウザや、Android 以外の端末では
         「アプリをインストール」しても共有シートに登録されず、この機能は動作しません。
-        お手数ですが、Android 端末の <strong>Chrome</strong> でこのページを開き直してください。
+        お手数ですが、Android 端末の
+        <strong>Chrome</strong> でこのページを開き直してください。
       </p>
     </div>
 
     <div id="main" class="card" hidden>
-      <label for="apiKey"><strong>APIキー</strong></label>
-      <p>
-        MarkyLinky 拡張機能のオプション画面で発行した API
-        キーを貼り付けて保存してください。
-      </p>
-      <input
-        id="apiKey"
-        type="text"
-        inputmode="text"
-        autocomplete="off"
-        autocapitalize="off"
-        spellcheck="false"
-        placeholder="API key"
-      />
-      <div>
-        <button id="save">保存</button>
-        <button id="clear" type="button">削除</button>
+      <div id="keyForm">
+        <label for="apiKey"><strong>APIキー</strong></label>
+        <p>
+          MarkyLinky 拡張機能のオプション画面で発行した API
+          キーを貼り付けて保存してください。
+        </p>
+        <input
+          id="apiKey"
+          type="text"
+          inputmode="text"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          placeholder="API key"
+        />
+        <div>
+          <button id="save">保存</button>
+        </div>
       </div>
+
+      <div id="keyDisplay" hidden>
+        <label><strong>APIキー</strong></label>
+        <p id="maskedKey" class="masked-key"></p>
+        <div>
+          <button id="clear" type="button">削除</button>
+        </div>
+      </div>
+
       <p id="status" class="status"></p>
     </div>
 

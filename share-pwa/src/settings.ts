@@ -1,14 +1,10 @@
 import { setupInstallButton } from "./lib/installPrompt";
-import {
-  isStandaloneDisplayMode,
-  isSupportedBrowser,
-} from "./lib/platform";
+import { isStandaloneDisplayMode, isSupportedBrowser } from "./lib/platform";
 import { registerServiceWorker } from "./lib/registerSw";
 import { clearApiKey, getApiKey, maskApiKey, setApiKey } from "./lib/storage";
 
 const unsupportedEl = document.querySelector<HTMLDivElement>("#unsupported")!;
-const notInstalledEl =
-  document.querySelector<HTMLDivElement>("#notInstalled")!;
+const notInstalledEl = document.querySelector<HTMLDivElement>("#notInstalled")!;
 const mainEl = document.querySelector<HTMLDivElement>("#main")!;
 
 async function init() {
@@ -31,9 +27,8 @@ async function init() {
 
   const keyFormEl = document.querySelector<HTMLDivElement>("#keyForm")!;
   const keyDisplayEl = document.querySelector<HTMLDivElement>("#keyDisplay")!;
-  const maskedKeyEl = document.querySelector<HTMLParagraphElement>(
-    "#maskedKey",
-  )!;
+  const maskedKeyEl =
+    document.querySelector<HTMLParagraphElement>("#maskedKey")!;
   const apiKeyInput = document.querySelector<HTMLInputElement>("#apiKey")!;
   const saveButton = document.querySelector<HTMLButtonElement>("#save")!;
   const clearButton = document.querySelector<HTMLButtonElement>("#clear")!;

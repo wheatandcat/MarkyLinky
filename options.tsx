@@ -2,21 +2,21 @@ import titleImage from "data-base64:~assets/title.png";
 import { Storage } from "@plasmohq/storage";
 import { useStorage } from "@plasmohq/storage/hook";
 import type { Provider, Session, User } from "@supabase/supabase-js";
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "~core/supabase";
+import ApiKey from "~uiParts/ApiKey/List";
 import Loading from "~uiParts/Loading";
 import Information from "~uiParts/Login/Information";
 import Login from "~uiParts/Login/Login";
-import Success from "~uiParts/Success";
 import Tips from "~uiParts/Login/Tips";
-import ApiKey from "~uiParts/ApiKey/List";
+import Success from "~uiParts/Success";
 import {
+  deleteApiKey,
+  getAllApiKeys,
   getAllItems,
   insertItems,
-  getAllApiKeys,
-  deleteApiKey,
 } from "./lib/database";
-import type { Data, ApiToken } from "./lib/storage";
+import type { ApiToken, Data } from "./lib/storage";
 
 import "./style.css";
 
@@ -40,7 +40,7 @@ function IndexOptions() {
   const getApiTokens = useCallback(async () => {
     if (!user) return;
     const { data: apiTokens, error: apiTokensError } = await getAllApiKeys(
-      user.id
+      user.id,
     );
     if (apiTokensError) {
       alert("API Keyの同期に失敗しました");
@@ -49,6 +49,11 @@ function IndexOptions() {
       setApiTokens(apiTokens);
     }
   }, [user, setApiTokens]);
+
+  useEffect(() => {
+    if (!user) return;
+    getApiTokens();
+  }, [user, getApiTokens]);
 
   useEffect(() => {
     async function init() {
@@ -156,7 +161,7 @@ function IndexOptions() {
         created: item.created,
       }))
       .sort(
-        (a, b) => new Date(a.created).getTime() - new Date(b.created).getTime()
+        (a, b) => new Date(a.created).getTime() - new Date(b.created).getTime(),
       );
 
     console.log("mixItems", mixItems);
@@ -178,7 +183,7 @@ function IndexOptions() {
           Authorization: `Bearer ${session?.access_token}`,
         },
         body: JSON.stringify({ title }),
-      }
+      },
     );
     if (!response.ok) {
       alert(`API Keyの作成に失敗しました。`);
@@ -260,6 +265,7 @@ function IndexOptions() {
                   onClick={() => {
                     supabase.auth.signOut();
                     setUser(null);
+                    setApiTokens([]);
                     chrome.runtime.sendMessage({
                       type: "Logout",
                     });

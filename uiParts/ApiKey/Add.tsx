@@ -1,10 +1,10 @@
-import { useState } from "react";
 import {
   Dialog,
   DialogBackdrop,
   DialogPanel,
   DialogTitle,
 } from "@headlessui/react";
+import { useState } from "react";
 
 type Props = {
   onAdd: (name: string) => Promise<boolean>;

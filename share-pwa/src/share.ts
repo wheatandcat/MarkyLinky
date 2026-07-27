@@ -1,16 +1,12 @@
 import { createItem } from "./lib/createItem";
 import { extractUrl } from "./lib/extractUrl";
 import { setupInstallButton } from "./lib/installPrompt";
-import {
-  isStandaloneDisplayMode,
-  isSupportedBrowser,
-} from "./lib/platform";
+import { isStandaloneDisplayMode, isSupportedBrowser } from "./lib/platform";
 import { registerServiceWorker } from "./lib/registerSw";
 import { getApiKey } from "./lib/storage";
 
 const unsupportedEl = document.querySelector<HTMLDivElement>("#unsupported")!;
-const notInstalledEl =
-  document.querySelector<HTMLDivElement>("#notInstalled")!;
+const notInstalledEl = document.querySelector<HTMLDivElement>("#notInstalled")!;
 const mainEl = document.querySelector<HTMLDivElement>("#main")!;
 
 function showError(statusEl: HTMLParagraphElement, message: string) {

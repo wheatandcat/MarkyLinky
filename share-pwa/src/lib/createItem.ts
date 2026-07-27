@@ -24,9 +24,7 @@ export async function createItem(
 
   if (!res.ok || body?.error) {
     const message =
-      typeof body === "string"
-        ? body
-        : (body?.error ?? "登録に失敗しました");
+      typeof body === "string" ? body : (body?.error ?? "登録に失敗しました");
     throw new Error(message);
   }
 

@@ -1,0 +1,132 @@
+:root {
+  color-scheme: light dark;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans",
+    sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 24px 16px;
+  max-width: 480px;
+  margin-inline: auto;
+  background: #f9fafb;
+  color: #111827;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #111827;
+    color: #f3f4f6;
+  }
+  input {
+    background: #1f2937;
+    color: #f3f4f6;
+    border-color: #374151 !important;
+  }
+}
+
+h1 {
+  font-size: 1.25rem;
+  margin-bottom: 8px;
+}
+
+p {
+  line-height: 1.6;
+}
+
+.card {
+  background: rgba(127, 127, 127, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.card.warning {
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+}
+
+.card.warning p:first-child {
+  margin-top: 0;
+}
+
+.card.warning p:last-child {
+  margin-bottom: 0;
+}
+
+input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 1rem;
+  margin-top: 8px;
+}
+
+button {
+  margin-top: 12px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #111827;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  button {
+    background: #f3f4f6;
+    color: #111827;
+  }
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.masked-key {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  word-break: break-all;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: rgba(127, 127, 127, 0.08);
+  margin-top: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .masked-key {
+    border-color: #374151;
+  }
+}
+
+.status {
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+
+.status.success {
+  color: #16a34a;
+}
+
+.status.error {
+  color: #dc2626;
+}
+
+.result {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.result img {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+}

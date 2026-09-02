@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#111827" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <title>MarkyLinky 共有登録</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <h1>MarkyLinky 共有登録</h1>
+    <p>
+      このアプリをホーム画面に追加すると、他のアプリの共有メニューから
+      MarkyLinky に URL を登録できるようになります。
+    </p>
+
+    <div id="unsupported" class="card warning" hidden>
+      <p>
+        <strong>このページは Android の Chrome でのみ利用できます。</strong>
+      </p>
+      <p>
+        Brave など Chrome 以外のブラウザや、Android 以外の端末では
+        「アプリをインストール」しても共有シートに登録されず、この機能は動作しません。
+        お手数ですが、Android 端末の
+        <strong>Chrome</strong> でこのページを開き直してください。
+      </p>
+    </div>
+
+    <div id="notInstalled" class="card warning" hidden>
+      <p><strong>まずアプリをインストールしてください。</strong></p>
+      <p>
+        ブラウザのタブで開いたままでは利用できません。「アプリをインストール」でホーム画面に追加し、追加されたアイコンから起動し直してください。
+      </p>
+      <button id="installApp" type="button" hidden>アプリをインストール</button>
+      <p id="installStatus" class="status"></p>
+    </div>
+
+    <div id="main" class="card" hidden>
+      <div id="keyForm">
+        <label for="apiKey"><strong>APIキー</strong></label>
+        <p>
+          MarkyLinky 拡張機能のオプション画面で発行した API
+          キーを貼り付けて保存してください。
+        </p>
+        <input
+          id="apiKey"
+          type="text"
+          inputmode="text"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          placeholder="API key"
+        />
+        <div>
+          <button id="save">保存</button>
+        </div>
+      </div>
+
+      <div id="keyDisplay" hidden>
+        <label><strong>APIキー</strong></label>
+        <p id="maskedKey" class="masked-key"></p>
+        <div>
+          <button id="clear" type="button">削除</button>
+        </div>
+      </div>
+
+      <p id="status" class="status"></p>
+    </div>
+
+    <script type="module" src="/src/settings.ts"></script>
+  </body>
+</html>

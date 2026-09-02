@@ -1,7 +1,7 @@
-import Card from "~uiParts/ApiKey/Crad";
-import Add from "~uiParts/ApiKey/Add";
-import type { ApiToken } from "~lib/storage";
 import { useState } from "react";
+import type { ApiToken } from "~lib/storage";
+import Add from "~uiParts/ApiKey/Add";
+import Card from "~uiParts/ApiKey/Crad";
 
 type Props = {
   apiTokens: ApiToken[];
@@ -105,6 +105,38 @@ function List(props: Props) {
             {curlText}
           </pre>
         </button>
+
+        <div className="text-sm px-1 pt-4">
+          <span className="text-gray-600 font-bold">■ iOSで使う場合</span>
+          <div className="text-sm text-gray-500 bg-gray-100 border-gray-200 px-2 py-2 mt-2 cursor-pointer w-full text-left border rounded-md p-2 whitespace-pre-wrap">
+            以下の記事を参考にiOSのショートカットを作成してください。
+            <br />-{" "}
+            <a
+              href="https://www.wheatandcat.me/entry/2025/12/27/103841"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 font-bold"
+            >
+              APIキーを使用してiOSのショートカット経由からwebページを登録できるようにする
+            </a>
+          </div>
+        </div>
+
+        <div className="text-sm font-bold text-gray-600 px-1 pt-4 pb-2">
+          ■ Androidで使う場合
+          <div className="text-sm text-gray-500 bg-gray-100 border-gray-200 px-2 py-2 mt-2 cursor-pointer w-full text-left border rounded-md p-2 whitespace-pre-wrap">
+            以下の記事を参考にPWAを経由して利用してください
+            <br />-{" "}
+            <a
+              href="https://www.wheatandcat.me/entry/2025/12/27/103841"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 font-bold"
+            >
+              APIキーを使用してiOSのショートカット経由からwebページを登録できるようにする
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );

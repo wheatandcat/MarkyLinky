@@ -1,0 +1,16 @@
+{
+  "name": "marky-linky-share-pwa",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Android共有シートからMarkyLinkyにURLを登録するPWA",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  }
+}

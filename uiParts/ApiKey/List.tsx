@@ -128,12 +128,12 @@ function List(props: Props) {
             以下の記事を参考にPWAを経由して利用してください
             <br />-{" "}
             <a
-              href="https://www.wheatandcat.me/entry/2025/12/27/103841"
+              href="https://www.wheatandcat.me/entry/2026/07/28/204003"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-500 font-bold"
             >
-              APIキーを使用してiOSのショートカット経由からwebページを登録できるようにする
+              APIキーを使用してAndroidのPWA経由からwebページを登録できるようにする
             </a>
           </div>
         </div>
